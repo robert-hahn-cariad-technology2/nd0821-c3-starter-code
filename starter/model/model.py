@@ -153,8 +153,7 @@ def compute_slice_metrics(
             'recall': recall,
             'fbeta': fbeta}
         logging.info(
-            f"slice metrics for {feature} = {value}: {
-                slice_metrics[value]}")
+            f"slice metrics for {feature} = {value}: {slice_metrics[value]}")
 
     # write to slice_output.txt
     with open('slice_output.txt', 'w') as f:
