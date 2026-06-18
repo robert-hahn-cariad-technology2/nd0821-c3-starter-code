@@ -105,7 +105,14 @@ def load_model(path):
     return model, encoder, lb
 
 
-def compute_slice_metrics(cleaned_df, target, categorical_features, feature, model, encoder, lb):
+def compute_slice_metrics(
+        cleaned_df,
+        target,
+        categorical_features,
+        feature,
+        model,
+        encoder,
+        lb):
     """
     Computes the model metrics for each slice of data that has a particular value for a given feature.
 
@@ -135,13 +142,21 @@ def compute_slice_metrics(cleaned_df, target, categorical_features, feature, mod
         X_slice = cleaned_df[cleaned_df[feature] == value]
         # y_slice = X_slice[target]
         # X_slice = X_slice.drop([target], axis=1)
-        X_slice, y_slice, _, _ = process_data(X_slice, categorical_features, label="salary", training=False,
-                                              encoder=encoder, lb=lb)
+        X_slice, y_slice, _, _ = process_data(
+            X_slice, categorical_features, label="salary", training=False, encoder=encoder, lb=lb)
         preds = inference(model, X_slice)
-        logging.info(f"shape of preds: {preds.shape} & shape of y_slice: {y_slice.shape}")
+        logging.info(
+            f"shape of preds: {
+                preds.shape} & shape of y_slice: {
+                y_slice.shape}")
         precision, recall, fbeta = compute_model_metrics(y_slice, preds)
-        slice_metrics[value] = {'precision': precision, 'recall': recall, 'fbeta': fbeta}
-        logging.info(f"slice metrics for {feature} = {value}: {slice_metrics[value]}")
+        slice_metrics[value] = {
+            'precision': precision,
+            'recall': recall,
+            'fbeta': fbeta}
+        logging.info(
+            f"slice metrics for {feature} = {value}: {
+                slice_metrics[value]}")
 
     # write to slice_output.txt
     with open('slice_output.txt', 'w') as f:
@@ -172,13 +187,15 @@ def predict_single(input_json, model_dir):
     logging.info(f"input_df: {input_df}")
 
     # clean data
-    cleaned_df, cat_cols, num_cols = clean_data(input_df, "../data/census_cleaned.csv", "salary", test=True)
+    cleaned_df, cat_cols, num_cols = clean_data(
+        input_df, "../data/census_cleaned.csv", "salary", test=True)
 
     # load model, encoder, and lb and predict on single json instance
     model, encoder, lb = load_model(model_dir)
 
     # process data
-    X, _, _, _ = process_data(cleaned_df, cat_cols, training=False, encoder=encoder, lb=lb)
+    X, _, _, _ = process_data(
+        cleaned_df, cat_cols, training=False, encoder=encoder, lb=lb)
 
     # predict
     preds = inference(model, X)

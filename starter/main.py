@@ -1,5 +1,4 @@
 from fastapi import FastAPI, Body, Response, status
-from pydantic import BaseModel
 from starter.model.model import load_model, predict_single
 import logging
 from pydantic import BaseModel
@@ -69,7 +68,9 @@ def read_root():
 def predict(data: Data):
     # if any data same as example, return error
     logging.info(f"data dict: {data.dict().values()}")
-    # if any(data.dict().values()) == None OR any(data.dict().values()) == "" or any(data.dict().values()) == "string" or any(data.dict().values()) == 0:
+    # if any(data.dict().values()) == None OR any(data.dict().values()) == ""
+    # or any(data.dict().values()) == "string" or any(data.dict().values()) ==
+    # 0:
 
     # Check if any string data is missing:
     if 'string' in data.dict().values():
