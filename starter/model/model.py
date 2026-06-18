@@ -146,9 +146,7 @@ def compute_slice_metrics(
             X_slice, categorical_features, label="salary", training=False, encoder=encoder, lb=lb)
         preds = inference(model, X_slice)
         logging.info(
-            f"shape of preds: {
-                preds.shape} & shape of y_slice: {
-                y_slice.shape}")
+            f"shape of preds: {preds.shape} & shape of y_slice: {y_slice.shape}")
         precision, recall, fbeta = compute_model_metrics(y_slice, preds)
         slice_metrics[value] = {
             'precision': precision,
