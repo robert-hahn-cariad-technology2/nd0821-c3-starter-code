@@ -1,4 +1,5 @@
-from fastapi import FastAPI, Body, Response, status
+from fastapi import FastAPI, Response, status
+from fastapi.responses import JSONResponse
 from starter.model.model import load_model, predict_single
 import logging
 from pydantic import BaseModel
@@ -56,40 +57,28 @@ async def startup_event():
 # welcome message on the root
 @app.get("/")
 def read_root():
-    response = Response(
+    return JSONResponse(
         status_code=status.HTTP_200_OK,
-        content="Welcome to the Adult Income Prediction API"
+        content={"message": "Welcome to the Adult Income Prediction API"}
     )
-    return response
 
 
-# model inference:
 @app.post("/predict")
 def predict(data: Data):
-    # if any data same as example, return error
-    logging.info(f"data dict: {data.dict().values()}")
-    # if any(data.dict().values()) == None OR any(data.dict().values()) == ""
-    # or any(data.dict().values()) == "string" or any(data.dict().values()) ==
-    # 0:
-
-    # Check if any string data is missing:
     if 'string' in data.dict().values():
-        response = Response(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            content="Please enter all the data correctly"
-        )
-        return response
+        return {
+            "error": "Please enter all the data correctly"
+        }
 
+    y_pred = predict_single(data, './starter/model')
+    pred = list(y_pred)[0]
+
+    # konsistentes Format sicherstellen
+    if pred in [1, ">50K", ">50k"]:
+        prediction = ">50K"
     else:
-        logging.info("Model inference started")
+        prediction = "<=50K"
 
-        # predict
-        y_pred = predict_single(data, './starter/model')
-        logging.info("Prediction completed")
-
-        response = Response(
-            status_code=status.HTTP_200_OK,
-            content="The predicted income is: " + str(list(y_pred)[0]),
-        )
-
-        return response
+    return {
+        "prediction": prediction
+    }
